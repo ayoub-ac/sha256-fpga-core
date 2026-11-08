@@ -81,8 +81,8 @@ A typical full hash sequence:
 
 ## Timing
 
-- **Latency**: from the cycle `valid_i && ready_o` is captured to the cycle `valid_o` rises is exactly 67 cycles — 1 cycle to register the input + reseed working variables, 64 round cycles, 1 cycle to add `(a..h)` into `H`, 1 cycle to assert `valid_o`.
-- **Throughput**: one 512-bit block per 67 cycles. At 100 MHz that is ~765 Mbps for a steady stream of full blocks.
+- **Latency**: from the cycle `valid_i && ready_o` is captured to the cycle `valid_o` rises is designed to be exactly 67 cycles (unverified) — 1 cycle to register the input + reseed working variables, 64 round cycles, 1 cycle to add `(a..h)` into `H`, 1 cycle to assert `valid_o`.
+- **Throughput**: one 512-bit block per 67 cycles. At 100 MHz that is ~765 Mbps for a steady stream of full blocks (unverified estimate derived from the cycle count).
 - **Back-to-back**: yes — the master can present a new continuation block on the cycle after `valid_o` pulses (`ready_o` re-asserts on that cycle).
 
 ## Reset
@@ -105,4 +105,4 @@ Single clock domain. `clk_i` clocks every flop in the design. If your system is 
 
 ## Synthesis attributes
 
-The core uses no vendor-specific attributes. It synthesizes cleanly with Yosys (`synth_ice40`, `synth_ecp5`, `synth_xilinx`) and with Vivado (default flow).
+The core uses no vendor-specific attributes. It is intended to synthesize with Yosys (`synth_ice40`, `synth_ecp5`, `synth_xilinx`) and with Vivado (default flow); not independently confirmed.

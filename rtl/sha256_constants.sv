@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-or-later OR Commercial
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // SHA-256 round constants K[0..63] from FIPS-180-4 §4.2.2 and initial hash
 // values H(0)[0..7] from §5.3.3.
 //

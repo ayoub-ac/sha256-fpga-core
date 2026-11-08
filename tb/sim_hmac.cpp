@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-or-later OR Commercial
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // Verilator C++ harness for hmac_sha256. Drives RFC 4231 HMAC-SHA-256 test
 // vectors and 100 random vectors cross-validated against Python's hmac.
 //

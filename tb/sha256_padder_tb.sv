@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-or-later OR Commercial
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // Top-level wrapper for sha256_padder. Used by sim_padder.cpp to verify that
 // the padder produces FIPS-180-4 §5.1.1 compliant output.
 

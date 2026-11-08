@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-or-later OR Commercial
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // Verilator C++ harness for sha256_core. Drives FIPS-180-4 / NIST CAVP test
 // vectors against the DUT and verifies digest, multi-block streaming,
 // reset-mid-hash behavior, and back-to-back hashing.

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-or-later OR Commercial
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Functional coverage collector for sha256_core. Counts hits on the bins below
 // from C++ via Verilator's --public-flat-rw, so the harness can read them at

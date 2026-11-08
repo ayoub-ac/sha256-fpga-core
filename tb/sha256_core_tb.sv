@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-or-later OR Commercial
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Top-level testbench wrapper for sha256_core. Stimulus is driven from the C++
 // harness (tb/sim_main.cpp); this module re-exports the DUT ports and binds:

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-or-later OR Commercial
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // SHA-256 single-round combinational logic.
 //
 // Implements the per-round update specified in FIPS-180-4 §6.2.2 step 3:

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-or-later OR Commercial
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Standalone assertion module for sha256_core. Instantiated alongside the DUT
 // in sha256_core_tb so the testbench can reuse the same protocol checks across

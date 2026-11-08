@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-or-later OR Commercial
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // SHA-256 K[0..63] and H(0)[0..7] constants — preprocessor-includable form.
 // Used by sha256_core.sv via `include "sha256_constants.svh"` so that older
 // Yosys revisions which struggle with package imports still synthesize the

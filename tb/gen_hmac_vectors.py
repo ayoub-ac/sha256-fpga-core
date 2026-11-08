@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# SPDX-License-Identifier: GPL-3.0-or-later OR Commercial
+# SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 #
 # Generate 100 random HMAC-SHA-256 vectors for cross-validation against the
 # DUT. Output is a C header dumped to stdout; the Makefile pipes it into

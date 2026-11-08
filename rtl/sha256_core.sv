@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-or-later OR Commercial
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // SHA-256 iterative core, one round per cycle.
 //
 // Reference: NIST FIPS-180-4, "Secure Hash Standard (SHS)", August 2015,

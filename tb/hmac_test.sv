@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-or-later OR Commercial
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Testbench wrapper for hmac_sha256. Stimulus is driven from the C++ harness
 // (tb/sim_hmac.cpp); this module just re-exports the DUT ports.

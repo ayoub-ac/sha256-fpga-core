@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-or-later OR Commercial
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // HMAC-SHA-256 (FIPS-198-1 / RFC 2104) wrapper around sha256_core.
 //

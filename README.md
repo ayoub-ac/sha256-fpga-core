@@ -1,22 +1,22 @@
 # sha256-fpga-core
 
 [![License: GPL-3.0-or-later or commercial](https://img.shields.io/badge/license-GPL--3.0%20%7C%20commercial-blue.svg)](LICENSE.md)
-[![Tests](https://img.shields.io/badge/tests-passing-brightgreen.svg)](#verification)
-[![FIPS-180-4 vectors](https://img.shields.io/badge/FIPS--180--4-NIST%20vectors-blue.svg)](#verification)
-[![Lint](https://img.shields.io/badge/Verilator%20lint-clean-brightgreen.svg)](#build--test)
+
+> **Status: experimental and unverified.** This core was written with AI assistance and has not been independently verified in simulation regressions, formal proofs or hardware. Claims in this repository about standards compliance, test results, timing and resource use are unverified. It has not been validated under NIST CAVP/CMVP and has not been evaluated for side-channel or fault-injection resistance. Do not use it in production or security-sensitive designs without your own verification. No support or maintenance is provided.
 
 A small, synthesisable SHA-256 IP core in SystemVerilog. One round per cycle,
 67-cycle iterative datapath, single clock domain. Targets iCE40, ECP5,
 Xilinx 7-series, Cyclone V, and Tang Nano 9K.
 
-The core is a clean implementation of FIPS-180-4 verified end-to-end against
-NIST FIPS-180-4 Appendix B / NIST CAVP test vectors plus a 1000-message
-cross-check against Python `hashlib.sha256`. End-to-end verifiable with the
-open-source Verilator simulator. No FPGA hardware required for the test suite.
+The core implements the FIPS 180-4 algorithm (not validated). NIST
+FIPS-180-4 Appendix B / NIST CAVP test vectors and a 1000-message cross-check
+against Python `hashlib.sha256` are included in a Verilator testbench; results
+not independently confirmed. No FPGA hardware is required to run the test suite.
 
-The Premium tier adds an HMAC-SHA-256 (FIPS-198-1 / RFC 2104) wrapper, the
-right primitive for any authenticated-MAC use case — raw SHA-256 is
-vulnerable to length-extension, HMAC fixes it.
+The repository also includes an HMAC-SHA-256 wrapper that implements the
+FIPS 198-1 / RFC 2104 algorithm (not validated). HMAC is intended for
+authenticated-MAC use cases, because raw SHA-256 is vulnerable to
+length-extension.
 
 ## Why this exists
 
@@ -32,11 +32,11 @@ toolchains.
 ## Quickstart
 
 ```bash
-git clone https://github.com/ayoubac/sha256-fpga-core.git
+git clone https://github.com/ayoub-ac/sha256-fpga-core.git
 cd sha256-fpga-core
 make lint test            # Verilator lint + run NIST vector tests
 make test-padder          # padder helper conformance
-make test-hmac            # HMAC-SHA-256 vs RFC 4231 (Premium variant)
+make test-hmac            # HMAC-SHA-256 vs RFC 4231
 make synth_report         # SYNTH_REPORT.md across iCE40/ECP5/Xilinx/Vivado/Quartus
 ```
 
@@ -64,7 +64,8 @@ W[t] is generated on the fly using a 16-deep rolling shift register
 (FIPS-180-4 §6.2.2 step 1); after 64 round cycles the working variables
 (a..h) are added back into the running hash H[0..7] (§6.2.2 step 4) which
 is preserved across continuation blocks. Latency: 67 cycles per 512-bit
-block (1 capture + 64 round + 1 update + 1 valid pulse).
+block (1 capture + 64 round + 1 update + 1 valid pulse; design intent,
+unverified).
 
 ## Port table
 
@@ -89,7 +90,9 @@ The core itself does not pad — caller responsibility.
 
 ## Headline numbers
 
-Real numbers from `make synth` (Yosys 0.33, basic iterative core):
+Unverified estimates attributed to `make synth` (Yosys 0.33, basic iterative
+core). They have not been independently reproduced, and the clock frequencies
+are not backed by place-and-route timing:
 
 | Target           | LUT          | FF   | BRAM | Latency       | Throughput @ Fmax     |
 |------------------|--------------|------|------|---------------|-----------------------|
@@ -98,7 +101,8 @@ Real numbers from `make synth` (Yosys 0.33, basic iterative core):
 | Xilinx Artix-7   | ~385 LUT     | 1067 | 0    | 67 cycles/blk | ~1.14 Gbps @ 150 MHz  |
 
 \* ECP5 generic synth with Yosys does not pack the schedule buffer into
-distributed RAM; `nextpnr-ecp5` packing reduces this several-fold.
+distributed RAM; `nextpnr-ecp5` packing is expected to reduce this several-fold
+(unverified estimate).
 See [`RESOURCE_ESTIMATES.md`](RESOURCE_ESTIMATES.md) for the full breakdown.
 
 ## Build & test
@@ -109,15 +113,17 @@ You need [Verilator](https://verilator.org/) 5.0 or newer.
 make lint           # static check the RTL (core + padder + hmac)
 make test           # build + run core NIST/CAVP/random tests
 make test-padder    # padder helper FIPS-180-4 §5.1.1 conformance
-make test-hmac      # HMAC-SHA-256 vs RFC 4231 (Premium variant)
+make test-hmac      # HMAC-SHA-256 vs RFC 4231
 make test-all       # all three
 ```
 
-A passing run ends with `+PASS all tests passed` and exits 0.
+The harness is written to end a passing run with `+PASS all tests passed` and
+exit 0. No passing run has been independently confirmed.
 
 ## Verification
 
-Three orthogonal techniques are wired into the testbench:
+Three techniques are wired into the testbench. Test vectors are included;
+results not independently confirmed.
 
 ### Directed tests (core)
 
@@ -130,9 +136,9 @@ Three orthogonal techniques are wired into the testbench:
 | 5 | Back-to-back hashes                   | init -> blocks -> digest -> init (new)          |
 | 6 | Reset mid-hash                        | Aborted hash recovers cleanly                   |
 | 7 | Single-byte input edge case           | Smallest non-empty input                        |
-| 8 | Padder all tail lengths {0,1,16,55..} | FIPS-180-4 §5.1.1 conformance                   |
+| 8 | Padder all tail lengths {0,1,16,55..} | FIPS-180-4 §5.1.1 padding checks                |
 
-### Directed tests (HMAC, Premium)
+### Directed tests (HMAC)
 
 | # | Test                                  | Coverage                                        |
 |---|---------------------------------------|-------------------------------------------------|
@@ -142,8 +148,8 @@ Three orthogonal techniques are wired into the testbench:
 
 ### SystemVerilog assertions
 
-`tb/sha256_core_assertions.sv` enforces protocol invariants on every cycle
-of every test:
+`tb/sha256_core_assertions.sv` is intended to check protocol invariants on
+every cycle of every test:
 
 - `valid_o` only fires exactly 67 cycles after a block is accepted
 - `digest_o` is stable while `valid_o` is asserted
@@ -151,13 +157,14 @@ of every test:
 - `init_i` / `next_i` are ignored when the core is busy (`ready_o` low)
 - W-buffer first-word consistency: `W_buf[0]` after capture = `block_i[511:480]`
 
-The assertions compile with both Verilator 5.x (`--assert`) and Vivado
-xsim. They are stripped on synthesis flows via `` `ifndef SYNTHESIS ``.
+The assertions are intended to compile with both Verilator 5.x (`--assert`)
+and Vivado xsim (not independently confirmed). They are stripped on synthesis flows via `` `ifndef SYNTHESIS ``.
 
 ### Functional coverage
 
 `tb/sha256_core_cov.sv` collects eight bins. The simulator prints a
-coverage summary at end-of-test:
+coverage summary at end-of-test in this format (illustrative output; results
+not independently confirmed):
 
 ```
 ---- Functional coverage ----
@@ -166,7 +173,7 @@ coverage summary at end-of-test:
 Coverage: 8/8 bins (100.0%)
 ```
 
-A regression that drops below 100% fails the gate.
+The harness is intended to fail a run that drops below 100%.
 
 ### Synthesis comparison report
 
@@ -178,12 +185,12 @@ when not on `$PATH`.
 
 ## Variants
 
-| Variant                          | Use case                                                                                              | Tier    |
-|----------------------------------|-------------------------------------------------------------------------------------------------------|---------|
-| `rtl/sha256_core.sv`             | Default: 67-cycle iterative core, single 512-bit block at a time                                      | GPL     |
-| `rtl/sha256_padder.sv`           | FIPS-180-4 §5.1.1 hardware message padder helper                                                      | GPL     |
-| `rtl/hmac_sha256.sv`             | HMAC-SHA-256 (FIPS-198-1 / RFC 2104) wrapper. Fixes length-extension. See [`SECURITY.md`](SECURITY.md). | Premium |
-| `vhdl_wrapper/sha256_core_vhdl.vhd` | VHDL-2008 entity wrapping the SV core for VHDL-only designs                                        | All     |
+| Variant                          | Use case                                                                                              |
+|----------------------------------|-------------------------------------------------------------------------------------------------------|
+| `rtl/sha256_core.sv`             | Default: 67-cycle iterative core, single 512-bit block at a time                                      |
+| `rtl/sha256_padder.sv`           | FIPS-180-4 §5.1.1 hardware message padder helper                                                      |
+| `rtl/hmac_sha256.sv`             | HMAC-SHA-256 wrapper; implements the FIPS 198-1 / RFC 2104 algorithm (not validated). Intended to avoid length-extension. See [`SECURITY.md`](SECURITY.md). |
+| `vhdl_wrapper/sha256_core_vhdl.vhd` | VHDL-2008 entity wrapping the SV core for VHDL-only designs                                        |
 
 ## License
 
@@ -191,9 +198,8 @@ Dual-licensed:
 
 - **GPL-3.0-or-later** for open-source projects. If your product links this
   RTL or its compiled bitstream, your project must also be GPL-3.0+.
-- **Commercial license** for closed-source products. Tiers and pricing in
-  [`PRICING.md`](PRICING.md). See [`LICENSE.md`](LICENSE.md) for the legal
-  text and an FAQ.
+- **Commercial license** for closed-source products. Commercial licenses are available on request: open a GitHub issue titled 'Commercial license request'. Do not post confidential details in the issue. Any commercial license is provided as is, without warranty, support or maintenance. This core is unverified (see README).
+  See [`LICENSE.md`](LICENSE.md) for the license text.
 
 If unsure which applies, read `LICENSE.md` or open an issue.
 
@@ -206,7 +212,7 @@ rtl/                  RTL sources
   sha256_constants.svh  K[0..63] / H(0)[0..7] preprocessor macros
   sha256_constants.sv   SV package wrapper (sha256_const_pkg)
   sha256_padder.sv      FIPS-180-4 §5.1.1 message padder helper
-  hmac_sha256.sv        HMAC-SHA-256 wrapper (Premium)
+  hmac_sha256.sv        HMAC-SHA-256 wrapper
 tb/                   testbench
   sim_main.cpp          C++ harness, NIST + CAVP + 1000 random vectors
   sim_padder.cpp        padder verification harness
@@ -233,7 +239,8 @@ Bug reports and patches welcome. Process:
 1. File an issue first for non-trivial changes.
 2. Fork, branch, and run `make lint test test-padder test-hmac` locally.
 3. Open a pull request with a description of what changed and why.
-4. CI runs the full test suite plus `synth_report`; both must be green.
+4. There is no CI; include the output of your local
+   `make lint test test-padder test-hmac` run in the pull request.
 
 ## Citation
 
@@ -242,7 +249,7 @@ Bug reports and patches welcome. Process:
   title  = {{sha256-fpga-core}: a small dual-licensed SHA-256 IP core in SystemVerilog with HMAC-SHA-256},
   author = {Achour, Ayoub},
   year   = {2026},
-  howpublished = {\url{https://github.com/ayoubac/sha256-fpga-core}}
+  howpublished = {\url{https://github.com/ayoub-ac/sha256-fpga-core}}
 }
 ```
 
@@ -257,4 +264,4 @@ Bug reports and patches welcome. Process:
 
 ## Author
 
-Ayoub Achour - [github.com/ayoubac](https://github.com/ayoubac)
+Ayoub Achour - [github.com/ayoub-ac](https://github.com/ayoub-ac)

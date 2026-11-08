@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-or-later OR Commercial
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // Verilator C++ harness for sha256_padder. Verifies that the padder produces
 // FIPS-180-4 §5.1.1 compliant output for a range of tail lengths.
 //

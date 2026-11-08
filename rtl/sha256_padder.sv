@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-or-later OR Commercial
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // SHA-256 message padder (helper module).
 //
 // Reference: NIST FIPS-180-4 §5.1.1 — "Padding the message".

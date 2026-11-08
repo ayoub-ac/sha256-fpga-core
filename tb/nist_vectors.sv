@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-or-later OR Commercial
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // NIST FIPS-180-4 Appendix B + NIST CAVP "Short Message" SHA-256 test vectors,
 // as a SystemVerilog package for non-Verilator simulators.
 //
